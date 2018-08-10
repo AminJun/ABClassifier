@@ -5,15 +5,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from distutils.version import LooseVersion
-import keras
-from keras.utils import np_utils
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, Reshape
-import keras.regularizers as regularizers
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+from distutils.version import LooseVersion
+
+import keras
+import numpy as np
+from keras.layers import Dense, Activation, Flatten
+from keras.models import Sequential
+from keras.utils import np_utils
 
 if LooseVersion(keras.__version__) >= LooseVersion('2.0.0'):
     from keras.layers import Conv2D
@@ -25,6 +24,7 @@ class _ArgsWrapper(object):
     """
     Wrapper that allows attribute access to dictionaries
     """
+
     def __init__(self, args):
         if not isinstance(args, dict):
             args = vars(args)
@@ -203,8 +203,7 @@ def cnn_model(logits=False, input_ph=None, img_rows=28, img_cols=28,
     else:
         input_shape = (img_rows, img_cols, channels)
 
-    layers = [conv_2d(nb_filters, (8, 8), (2, 2), "same",
-                      input_shape=input_shape),
+    layers = [conv_2d(nb_filters, (8, 8), (2, 2), "same", input_shape=input_shape),
               Activation(activation),
               conv_2d((nb_filters * 2), (6, 6), (2, 2), "valid"),
               Activation(activation),
@@ -218,9 +217,5 @@ def cnn_model(logits=False, input_ph=None, img_rows=28, img_cols=28,
 
     if logits:
         logits_tensor = model(input_ph)
-    #model.add(Activation('softmax'))
-
-    if logits:
         return model, logits_tensor
-    else:
-        return model
+    return model

@@ -5,18 +5,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import keras
 import math
-import numpy as np
 import os
-import six
-import tensorflow as tf
 import time
 import warnings
 
-from utils import batch_indices, _ArgsWrapper
-
+import keras
+import six
+import tensorflow as tf
 from tensorflow.python.platform import flags
+
+from utils import batch_indices, _ArgsWrapper
 
 FLAGS = flags.FLAGS
 
@@ -29,6 +28,7 @@ class _FlagsWrapper(_ArgsWrapper):
     Plain _ArgsWrapper should be used instead if the support for FLAGS
     is removed.
     """
+
     def __getattr__(self, name):
         val = self.args.get(name)
         if val is None:
@@ -50,7 +50,7 @@ def model_loss(y, model, mean=True):
     """
 
     op = model.op
-    #print(op)
+    # print(op)
     if "softmax" in str(op).lower():
         logits, = op.inputs
     else:
@@ -64,7 +64,7 @@ def model_loss(y, model, mean=True):
 
 
 def model_train(sess, x, y, predictions, X_train, Y_train, save=False,
-                predictions_adv=None, evaluate=None, verbose=True, args=None):
+                predictions_adv=None, evaluate=None, verbose=True, args=None, loss=None):
     """
     Train a TF graph
     :param sess: TF session to use when training the graph
@@ -95,10 +95,11 @@ def model_train(sess, x, y, predictions, X_train, Y_train, save=False,
         assert args.filename, "Filename for save was not given in args dict"
 
     # Define loss
-    loss = model_loss(y, predictions)
-    if predictions_adv is not None:
-        p = 1.0
-        loss = ((1-p)*loss + p*model_loss(y, predictions_adv))
+    if loss is None:
+        loss = model_loss(y, predictions)
+        if predictions_adv is not None:
+            p = 1.0
+            loss = ((1 - p) * loss + p * model_loss(y, predictions_adv))
 
     train_step = tf.train.AdamOptimizer(learning_rate=args.learning_rate).minimize(loss)
 
@@ -118,7 +119,6 @@ def model_train(sess, x, y, predictions, X_train, Y_train, save=False,
 
             prev = time.time()
             for batch in range(nb_batches):
-
                 # Compute batch start and end indices
                 start, end = batch_indices(
                     batch, len(X_train), args.batch_size)
@@ -177,8 +177,8 @@ def model_eval(sess, x, y, model, X_test, Y_test, args=None):
         assert nb_batches * args.batch_size >= len(X_test)
 
         for batch in range(nb_batches):
-            #if batch % 100 == 0 and batch > 0:
-                #print("Batch " + str(batch))
+            # if batch % 100 == 0 and batch > 0:
+            # print("Batch " + str(batch))
 
             # Must not use the `batch_indices` function here, because it
             # repeats some examples.

@@ -8,9 +8,7 @@ from __future__ import unicode_literals
 import keras
 from keras.datasets import mnist
 from keras.utils import np_utils
-import warnings
 
-import utils
 
 def data_mnist():
     # These values are specific to MNIST

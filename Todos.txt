@@ -1,0 +1,4 @@
+[ ] 48  attacks_tf.py   if is never true, and the code is wrong, tf.equal does not work.
+[ ] 51  attacks_tf.py   Check if its passing train or test data.
+[ ] 52  attacks_tf.py   It should undo the label smoothing.
+[ ] 57  attacks_tf.py   Get the correct gradient and use the epsilon in the next line .
